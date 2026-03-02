@@ -42,6 +42,9 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Double minSalary,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id,asc") String sort
@@ -53,7 +56,10 @@ public class EmployeeController {
         Sort sortObj = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
 
         Pageable pageable = PageRequest.of(page, size, sortObj);
-        Page<EmployeeResponseDTO> employees = employeeService.getAllEmployees(pageable);
+//        Page<EmployeeResponseDTO> employees = employeeService.getAllEmployees(pageable);
+
+        Page<EmployeeResponseDTO> employees =
+                employeeService.getAllEmployees(name, email, minSalary, pageable);
 
         return ResponseEntity.ok(employees);
     }

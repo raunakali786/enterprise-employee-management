@@ -5,8 +5,10 @@ import com.raunak.ems.dto.EmployeeResponseDTO;
 import com.raunak.ems.entity.Employee;
 import com.raunak.ems.exception.EmployeeNotFoundException;
 import com.raunak.ems.repository.EmployeeRepository;
+import com.raunak.ems.specification.EmployeeSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,10 +43,37 @@ public class EmployeeServiceImpl implements EmployeeService {
 //                .toList();
 //    }
 
-    @Override
-    public Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable) {
+//    @Override
+//    public Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable) {
+//
+//        Page<Employee> page = employeeRepository.findAll(pageable);
+//
+//        return page.map(this::mapToResponse);
+//    }
 
-        Page<Employee> page = employeeRepository.findAll(pageable);
+    @Override
+    public Page<EmployeeResponseDTO> getAllEmployees(
+            String name,
+            String email,
+            Double minSalary,
+            Pageable pageable
+    ) {
+
+        Specification<Employee> spec = Specification.where(null);
+
+        if (name != null && !name.isBlank()) {
+            spec = spec.and(EmployeeSpecification.hasName(name));
+        }
+
+        if (email != null && !email.isBlank()) {
+            spec = spec.and(EmployeeSpecification.hasEmail(email));
+        }
+
+        if (minSalary != null) {
+            spec = spec.and(EmployeeSpecification.salaryGreaterThan(minSalary));
+        }
+
+        Page<Employee> page = employeeRepository.findAll(spec, pageable);
 
         return page.map(this::mapToResponse);
     }

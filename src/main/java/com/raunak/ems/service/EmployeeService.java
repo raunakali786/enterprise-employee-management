@@ -24,8 +24,14 @@ public interface EmployeeService {
 
 //    List<EmployeeResponseDTO> getAllEmployees();
 
-    Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable);
+//    Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable);
 
+    public Page<EmployeeResponseDTO> getAllEmployees(
+            String name,
+            String email,
+            Double minSalary,
+            Pageable pageable
+    );
 
     EmployeeResponseDTO getEmployeeById(Long id);
 
