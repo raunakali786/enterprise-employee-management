@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +43,16 @@ public class EmployeeController {
     @GetMapping
     public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
     ) {
+        String[] sortParams = sort.split(",");
 
-        Pageable pageable = PageRequest.of(page, size);
+        String sortField = sortParams[0];
+        String sortDirection = sortParams.length > 1 ? sortParams[1] : "asc";
+        Sort sortObj = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+
+        Pageable pageable = PageRequest.of(page, size, sortObj);
         Page<EmployeeResponseDTO> employees = employeeService.getAllEmployees(pageable);
 
         return ResponseEntity.ok(employees);
@@ -115,6 +122,9 @@ public class EmployeeController {
 //
 //        Employee updated = employeeService.updateEmployee(id, employee);
 //        return ResponseEntity.ok(updated);
+    // Just to test the Branch updation on GitHub
 //    }
+
+
 
 }
