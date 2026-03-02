@@ -1,5 +1,7 @@
 package com.raunak.ems.controller;
 
+import com.raunak.ems.common.ApiResponse;
+import com.raunak.ems.common.PagedResponse;
 import com.raunak.ems.dto.CreateEmployeeRequestDTO;
 import com.raunak.ems.dto.EmployeeResponseDTO;
 import com.raunak.ems.dto.UpdateEmployeeRequestDTO;
@@ -41,7 +43,8 @@ public class EmployeeController {
 //    }
 
     @GetMapping
-    public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
+//    public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees
+    public ResponseEntity<ApiResponse<PagedResponse<EmployeeResponseDTO>>> getAllEmployees(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) Double minSalary,
@@ -58,10 +61,32 @@ public class EmployeeController {
         Pageable pageable = PageRequest.of(page, size, sortObj);
 //        Page<EmployeeResponseDTO> employees = employeeService.getAllEmployees(pageable);
 
-        Page<EmployeeResponseDTO> employees =
+//        Page<EmployeeResponseDTO> employees =
+//                employeeService.getAllEmployees(name, email, minSalary, pageable);
+
+        Page<EmployeeResponseDTO> pageResult =
                 employeeService.getAllEmployees(name, email, minSalary, pageable);
 
-        return ResponseEntity.ok(employees);
+        PagedResponse<EmployeeResponseDTO> pagedResponse =
+                new PagedResponse<>(
+                        pageResult.getContent(),
+                        pageResult.getNumber(),
+                        pageResult.getSize(),
+                        pageResult.getTotalElements(),
+                        pageResult.getTotalPages(),
+                        pageResult.isLast()
+                );
+
+        ApiResponse<PagedResponse<EmployeeResponseDTO>> response =
+                new ApiResponse<>(
+                        true,
+                        "Employees fetched successfully",
+                        pagedResponse
+                );
+
+        return ResponseEntity.ok(response);
+
+//        return ResponseEntity.ok(employees);
     }
 
 
