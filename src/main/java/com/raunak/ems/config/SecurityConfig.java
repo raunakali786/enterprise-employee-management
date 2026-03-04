@@ -63,6 +63,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/employees/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.PATCH, "/api/employees/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

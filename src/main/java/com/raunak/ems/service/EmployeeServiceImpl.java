@@ -3,6 +3,7 @@ package com.raunak.ems.service;
 import com.raunak.ems.dto.CreateEmployeeRequestDTO;
 import com.raunak.ems.dto.EmployeeResponseDTO;
 import com.raunak.ems.dto.EmployeeUserResponseDTO;
+import com.raunak.ems.dto.PatchEmployeeRequestDTO;
 import com.raunak.ems.entity.Employee;
 import com.raunak.ems.exception.EmployeeNotFoundException;
 import com.raunak.ems.repository.EmployeeRepository;
@@ -164,6 +165,29 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             return page.map(this::mapToUserResponse);
         }
+    }
+
+    @Override
+    public EmployeeResponseDTO patchEmployee(Long id, PatchEmployeeRequestDTO dto) {
+
+        Employee existing = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
+
+        if (dto.getName() != null) {
+            existing.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+            existing.setEmail(dto.getEmail());
+        }
+
+        if (dto.getSalary() != null) {
+            existing.setSalary(dto.getSalary());
+        }
+
+        Employee updated = employeeRepository.save(existing);
+
+        return mapToResponse(updated);
     }
 
     private EmployeeUserResponseDTO mapToUserResponse(Employee employee) {

@@ -4,6 +4,7 @@ import com.raunak.ems.common.ApiResponse;
 import com.raunak.ems.common.PagedResponse;
 import com.raunak.ems.dto.CreateEmployeeRequestDTO;
 import com.raunak.ems.dto.EmployeeResponseDTO;
+import com.raunak.ems.dto.PatchEmployeeRequestDTO;
 import com.raunak.ems.dto.UpdateEmployeeRequestDTO;
 import com.raunak.ems.entity.Employee;
 import com.raunak.ems.service.EmployeeService;
@@ -108,6 +109,16 @@ public class EmployeeController {
             @Valid @RequestBody CreateEmployeeRequestDTO dto) {
 
         EmployeeResponseDTO updated = employeeService.updateEmployee(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<EmployeeResponseDTO> patchEmployee(
+            @PathVariable Long id,
+            @RequestBody PatchEmployeeRequestDTO dto) {
+
+        EmployeeResponseDTO updated = employeeService.patchEmployee(id, dto);
+
         return ResponseEntity.ok(updated);
     }
 

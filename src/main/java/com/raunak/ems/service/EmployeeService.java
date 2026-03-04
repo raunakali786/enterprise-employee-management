@@ -1,6 +1,7 @@
 package com.raunak.ems.service;
 import com.raunak.ems.dto.CreateEmployeeRequestDTO;
 import com.raunak.ems.dto.EmployeeResponseDTO;
+import com.raunak.ems.dto.PatchEmployeeRequestDTO;
 import com.raunak.ems.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,5 +40,7 @@ public interface EmployeeService {
     void deleteEmployee(Long id);
 
     EmployeeResponseDTO updateEmployee(Long id, CreateEmployeeRequestDTO dto);
+
+    EmployeeResponseDTO patchEmployee(Long id, PatchEmployeeRequestDTO dto);
 
 }
