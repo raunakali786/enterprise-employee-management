@@ -4,6 +4,7 @@ import com.raunak.ems.dto.EmployeeResponseDTO;
 import com.raunak.ems.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface EmployeeService {
 
 //    Page<EmployeeResponseDTO> getAllEmployees(Pageable pageable);
 
-    public Page<EmployeeResponseDTO> getAllEmployees(
+    Page<?> getAllEmployees (
             String name,
             String email,
             Double minSalary,

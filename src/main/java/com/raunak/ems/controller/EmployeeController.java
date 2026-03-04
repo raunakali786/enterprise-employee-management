@@ -44,7 +44,7 @@ public class EmployeeController {
 
     @GetMapping
 //    public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees
-    public ResponseEntity<ApiResponse<PagedResponse<EmployeeResponseDTO>>> getAllEmployees(
+    public ResponseEntity<ApiResponse<PagedResponse<?>>> getAllEmployees(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) Double minSalary,
@@ -64,10 +64,10 @@ public class EmployeeController {
 //        Page<EmployeeResponseDTO> employees =
 //                employeeService.getAllEmployees(name, email, minSalary, pageable);
 
-        Page<EmployeeResponseDTO> pageResult =
+        Page<?> pageResult =
                 employeeService.getAllEmployees(name, email, minSalary, pageable);
 
-        PagedResponse<EmployeeResponseDTO> pagedResponse =
+        PagedResponse<?> pagedResponse =
                 new PagedResponse<>(
                         pageResult.getContent(),
                         pageResult.getNumber(),
@@ -77,7 +77,7 @@ public class EmployeeController {
                         pageResult.isLast()
                 );
 
-        ApiResponse<PagedResponse<EmployeeResponseDTO>> response =
+        ApiResponse<PagedResponse<?>> response = response =
                 new ApiResponse<>(
                         true,
                         "Employees fetched successfully",

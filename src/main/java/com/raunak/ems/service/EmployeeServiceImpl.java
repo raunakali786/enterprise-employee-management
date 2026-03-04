@@ -2,6 +2,7 @@ package com.raunak.ems.service;
 
 import com.raunak.ems.dto.CreateEmployeeRequestDTO;
 import com.raunak.ems.dto.EmployeeResponseDTO;
+import com.raunak.ems.dto.EmployeeUserResponseDTO;
 import com.raunak.ems.entity.Employee;
 import com.raunak.ems.exception.EmployeeNotFoundException;
 import com.raunak.ems.repository.EmployeeRepository;
@@ -9,7 +10,12 @@ import com.raunak.ems.specification.EmployeeSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -51,32 +57,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        return page.map(this::mapToResponse);
 //    }
 
-    @Override
-    public Page<EmployeeResponseDTO> getAllEmployees(
-            String name,
-            String email,
-            Double minSalary,
-            Pageable pageable
-    ) {
-
-        Specification<Employee> spec = Specification.where(null);
-
-        if (name != null && !name.isBlank()) {
-            spec = spec.and(EmployeeSpecification.hasName(name));
-        }
-
-        if (email != null && !email.isBlank()) {
-            spec = spec.and(EmployeeSpecification.hasEmail(email));
-        }
-
-        if (minSalary != null) {
-            spec = spec.and(EmployeeSpecification.salaryGreaterThan(minSalary));
-        }
-
-        Page<Employee> page = employeeRepository.findAll(spec, pageable);
-
-        return page.map(this::mapToResponse);
-    }
+//    @Override
+//    public Page<EmployeeResponseDTO> getAllEmployees(
+//            String name,
+//            String email,
+//            Double minSalary,
+//            Pageable pageable
+//    ) {
+//
+//        Specification<Employee> spec = Specification.where(null);
+//
+//        if (name != null && !name.isBlank()) {
+//            spec = spec.and(EmployeeSpecification.hasName(name));
+//        }
+//
+//        if (email != null && !email.isBlank()) {
+//            spec = spec.and(EmployeeSpecification.hasEmail(email));
+//        }
+//
+//        if (minSalary != null) {
+//            spec = spec.and(EmployeeSpecification.salaryGreaterThan(minSalary));
+//        }
+//
+//        Page<Employee> page = employeeRepository.findAll(spec, pageable);
+//
+//        return page.map(this::mapToResponse);
+//    }
 
 
     @Override
@@ -122,6 +128,52 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return dto;
     }
+
+
+    @Override
+    public Page<?> getAllEmployees(String name,
+                                   String email,
+                                   Double minSalary,
+                                   Pageable pageable) {
+
+        Specification<Employee> spec = Specification.where(null);
+
+        if (name != null) {
+            spec = spec.and(EmployeeSpecification.hasName(name));
+        }
+
+        if (email != null) {
+            spec = spec.and(EmployeeSpecification.hasEmail(email));
+        }
+
+        if (minSalary != null) {
+            spec = spec.and(EmployeeSpecification.salaryGreaterThan(minSalary));
+        }
+
+        Page<Employee> page = employeeRepository.findAll(spec, pageable);
+
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            return page.map(this::mapToResponse);
+        } else {
+            return page.map(this::mapToUserResponse);
+        }
+    }
+
+    private EmployeeUserResponseDTO mapToUserResponse(Employee employee) {
+        EmployeeUserResponseDTO dto = new EmployeeUserResponseDTO();
+        dto.setId(employee.getId());
+        dto.setName(employee.getName());
+        dto.setEmail(employee.getEmail());
+        return dto;
+    }
+
 
 
 
